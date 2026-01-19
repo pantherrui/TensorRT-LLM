@@ -5,6 +5,8 @@ from itertools import product
 
 from cutlass_library import *
 
+ENABLE_INT4 = False
+ENABLE_FP4 = False
 
 ################################################################################
 # Epilogue Tag enum and string utils
@@ -402,6 +404,14 @@ def is_grouped_gemm_op_valid(op):
 
 
 def is_op_valid(op):
+    # 全局兜底：禁 INT4
+    if (op.weight_type == DataType.u4) and (not ENABLE_INT4):
+        return False
+
+    # 全局兜底：禁 FP4
+    if (op.act_type == e2m1) and (not ENABLE_FP4):
+        return False
+
     if op.arch >= 100:
         return is_gemm_op_valid_sm100(op)
 
@@ -452,6 +462,9 @@ def generate_sm90_mixed_gemm_operations():
 
     operations = list()
     for dtype_combo, quant_op, epi_tag, cta_shape_mn, cga_shape in partial_args:
+        act_t, weight_t, *_ = dtype_combo
+        if (weight_t == DataType.u4) and (not ENABLE_INT4):
+            continue
         max_k_bits = 128 * 8
         cta_shape_k = max_k_bits // GetDataTypeBits(dtype_combo[0])
         cta_shape_mnk = cta_shape_mn + (cta_shape_k, )
@@ -774,10 +787,13 @@ if __name__ == "__main__":
     # The goal here is to group kernels with common instantiations together in order to reduce template instantiation overheads.
     # Template instantiation dominates the time in a compilation unit, so it is the most important factor to improve.
     operations = []
-    operations += generate_sm120_operations(has_arch(120))
-    operations += generate_sm100_operations(has_arch(100))
-    operations += generate_sm90_operations(has_arch(90))
-    operations += generate_sm80_operations(has_arch(80) or has_arch(89))
+    # Only support SM86 / SM89
+    # operations += generate_sm90_operations(has_arch(90) or has_arch(89))
+    operations += generate_sm80_operations(has_arch(80) or has_arch(86) or has_arch(89))
+    # operations += generate_sm120_operations(has_arch(120))
+    # operations += generate_sm100_operations(has_arch(100))
+    # operations += generate_sm90_operations(has_arch(90))
+    # operations += generate_sm80_operations(has_arch(80) or has_arch(89))
 
     def should_skip(op):
         is_internal = op.gemm_kind == GemmKind.Grouped

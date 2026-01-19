@@ -55,7 +55,7 @@ int64_t StreamReader::read(void* destination, int64_t nbBytes)
 }
 
 // StreamReader using GDS
-
+#if 0
 GDSStreamReader::GDSStreamReader(std::filesystem::path const& filePath)
 {
     auto const start_time = std::chrono::high_resolution_clock::now();
@@ -215,3 +215,4 @@ bool GDSStreamReader::initializeDriver()
     mDriverInitialized = true;
     return true;
 }
+#endif

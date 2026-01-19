@@ -47,7 +47,7 @@ add_library(
   fmhaPackMaskOp.cpp
   fp8Op.cpp
   fp8PerTensorScalingTrtllmGenGemm.cpp
-  fp4Op.cpp
+  # fp4Op.cpp
   fp4Gemm.cpp
   fp4GemmTrtllmGen.cpp
   fp8BatchedGemmTrtllmGen.cpp

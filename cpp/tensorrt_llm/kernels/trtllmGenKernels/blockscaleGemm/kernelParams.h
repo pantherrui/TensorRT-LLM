@@ -205,10 +205,12 @@ struct TrtllmGenBlockScaleGemmKernelParams
         {
             tmaDataFormat = CU_TENSOR_MAP_DATA_TYPE_BFLOAT16;
         }
+#ifdef ENABLE_FP4
         else if (dtype == Data_type::DATA_TYPE_E2M1)
         {
             tmaDataFormat = CU_TENSOR_MAP_DATA_TYPE_16U4_ALIGN8B;
         }
+#endif
         else if (dtype == Data_type::DATA_TYPE_FP32)
         {
             tmaDataFormat = CU_TENSOR_MAP_DATA_TYPE_FLOAT32;

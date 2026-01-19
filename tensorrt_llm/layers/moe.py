@@ -452,7 +452,7 @@ class MOEWeightWrapper(Module):
         else:
             self.register_parameter('per_channel_scale', None)
 
-        if quant_mode.has_nvfp4():
+        if hasattr(trt, 'fp4') and quant_mode.has_nvfp4():
             self.expert_shape = (experts_per_node, out_features, in_features)
             weight_dtype = trt.fp4
 
@@ -1062,7 +1062,7 @@ class MixtureOfExperts(Module):
                 raise RuntimeError(
                     "Cannot output FP8 value without knowing quantization parameter"
                 )
-        elif self.quant_mode.has_nvfp4():
+        elif hasattr(trt, 'fp4') and self.quant_mode.has_nvfp4():
             # We pass through the weights unchanged, the quantization is done in the plugin
             hidden_states_quant = hidden_states
             dtype_quant = trt.fp4

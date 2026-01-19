@@ -201,9 +201,12 @@ TllmRuntime::TllmRuntime(RawEngine const& rawEngine, nvinfer1::ILogger* logger, 
     {
         if (useGpuDirectStorage)
         {
-            TLLM_LOG_INFO("GDS is used to load the engine!");
-            auto reader = GDSStreamReader(rawEngine.getPath());
+            TLLM_LOG_INFO("GDS is not supported fallback to StreamReader!");
+            auto reader = StreamReader(rawEngine.getPath());
             mEngine.reset(mRuntime->deserializeCudaEngine(reader));
+            // TLLM_LOG_INFO("GDS is used to load the engine!");
+            // auto reader = GDSStreamReader(rawEngine.getPath());
+            // mEngine.reset(mRuntime->deserializeCudaEngine(reader));
         }
         else
         {

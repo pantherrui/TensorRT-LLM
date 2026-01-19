@@ -36,8 +36,8 @@ static std::pair<K, V> makeEntry()
                 typename CutlassType<ElementB>::type,
                 typename CutlassType<ElementD>::type,                                         // C, unused
                 typename CutlassType<ElementD>::type,
-                std::conditional_t<ElementA == DataType::kFP4, cutlass::float_ue4m3_t, void>, // SFA
-                std::conditional_t<ElementB == DataType::kFP4, cutlass::float_ue4m3_t, void>, // SFB
+                void, // std::conditional_t<ElementA == DataType::kFP4, cutlass::float_ue4m3_t, void>, // SFA
+                void, // std::conditional_t<ElementB == DataType::kFP4, cutlass::float_ue4m3_t, void>, // SFB
                 cutlass::layout::RowMajor, cutlass::layout::ColumnMajor,
                 cutlass::layout::RowMajor,                                                    // C, unused
                 cutlass::layout::RowMajor>;
@@ -52,9 +52,10 @@ static std::map<K, V> getTypedInstantiators()
     return std::map<K, V>({makeEntry<K, V, DataType::kHALF, DataType::kHALF, DataType::kHALF>(),
         makeEntry<K, V, DataType::kBF16, DataType::kBF16, DataType::kBF16>(),
         makeEntry<K, V, DataType::kFP8, DataType::kFP8, DataType::kHALF>(),
-        makeEntry<K, V, DataType::kFP8, DataType::kFP8, DataType::kBF16>(),
-        makeEntry<K, V, DataType::kFP4, DataType::kFP4, DataType::kHALF>(),
-        makeEntry<K, V, DataType::kFP4, DataType::kFP4, DataType::kBF16>()});
+        makeEntry<K, V, DataType::kFP8, DataType::kFP8, DataType::kBF16>()
+        // makeEntry<K, V, DataType::kFP4, DataType::kFP4, DataType::kHALF>(),
+        // makeEntry<K, V, DataType::kFP4, DataType::kFP4, DataType::kBF16>()
+    });
 }
 
 ////////////////////////////////////////////////////////////

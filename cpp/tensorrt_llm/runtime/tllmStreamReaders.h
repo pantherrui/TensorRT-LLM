@@ -34,6 +34,7 @@ private:
     std::ifstream mFile;
 };
 
+#if 0
 class GDSStreamReader final : public nvinfer1::IStreamReaderV2
 {
 public:
@@ -69,3 +70,4 @@ private:
     CUfileError_t (*cuFileDriverClose)(){};
     ssize_t (*cuFileRead)(CUfileHandle_t, void*, size_t, int64_t, int64_t){};
 };
+#endif

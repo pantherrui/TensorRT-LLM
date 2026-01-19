@@ -87,7 +87,8 @@ nvinfer1::DataType strToDType(std::string type)
         {"float32", nvinfer1::DataType::kFLOAT}, {"bfloat16", nvinfer1::DataType::kBF16},
         {"float16", nvinfer1::DataType::kHALF}, {"bool", nvinfer1::DataType::kBOOL},
         {"uint8", nvinfer1::DataType::kUINT8}, {"int8", nvinfer1::DataType::kINT8}, {"fp8", nvinfer1::DataType::kFP8},
-        {"int4", nvinfer1::DataType::kINT4}};
+        // {"int4", nvinfer1::DataType::kINT4}
+    };
 
     TLLM_CHECK_WITH_INFO(typeMap.count(type) > 0, type + " not found in strToDtype.");
     return typeMap.at(type);

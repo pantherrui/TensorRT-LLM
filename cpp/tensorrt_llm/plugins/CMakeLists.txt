@@ -58,10 +58,10 @@ set(PLUGIN_LISTS
     gemmSwigluPlugin
     fp8RowwiseGemmPlugin
     smoothQuantGemmPlugin
-    fp4GemmPlugin
+    # fp4GemmPlugin
     quantizePerTokenPlugin
     quantizeTensorPlugin
-    quantizeToFP4Plugin
+    # quantizeToFP4Plugin
     layernormQuantizationPlugin
     rmsnormQuantizationPlugin
     weightOnlyGroupwiseQuantMatmulPlugin

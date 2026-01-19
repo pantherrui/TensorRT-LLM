@@ -201,8 +201,8 @@ _str_to_trt_dtype_dict = dict(float16=trt.float16,
                               int8=trt.int8,
                               bool=trt.bool,
                               bfloat16=trt.bfloat16,
-                              fp8=trt.fp8,
-                              nvfp4=trt.fp4)
+                              fp8=trt.fp8)
+                            #   nvfp4=trt.fp4)
 
 
 def str_dtype_to_trt(dtype):

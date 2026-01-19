@@ -289,8 +289,19 @@ void runGemm(cudaKernel_t kernel, void* mat_a, int ld_a, void* mat_b, int ld_b, 
     input.grouped_layout = grouped_layout;
 
     // Launch
-    auto status = cudaLaunchKernelEx(&config, kernel, reinterpret_cast<__nv_bfloat16*>(mat_d), scales_b, input,
-        tma_a_desc, tma_b_desc, tma_scales_a_desc, tma_d_desc);
+    void* kernelArgs[] = {
+        reinterpret_cast<void*>(mat_d),
+        reinterpret_cast<void*>(scales_b),
+        reinterpret_cast<void*>(&input),  // 如果是指针，直接传递地址
+        reinterpret_cast<void*>(&tma_a_desc),
+        reinterpret_cast<void*>(&tma_b_desc),
+        reinterpret_cast<void*>(&tma_scales_a_desc),
+        reinterpret_cast<void*>(&tma_d_desc)
+    };
+    auto status = cudaLaunchKernelExC(&config, kernel, kernelArgs);
+
+    // auto status = cudaLaunchKernelExC(&config, kernel, reinterpret_cast<void**>(&mat_d), scales_b, input,
+        // tma_a_desc, tma_b_desc, tma_scales_a_desc, tma_d_desc);
     DG_HOST_ASSERT(status == cudaSuccess);
 }
 
@@ -332,8 +343,19 @@ void runGemm(cudaKernel_t kernel, void* mat_a, int ld_a, void* mat_b, int ld_b, 
     input.problem_m_padded_offsets = problem_m_padded_offsets;
 
     // Launch
-    auto status = cudaLaunchKernelEx(&config, kernel, reinterpret_cast<__nv_bfloat16*>(mat_d), scales_b, input,
-        tma_a_desc, tma_b_desc, tma_scales_a_desc, tma_d_desc);
+    void* kernelArgs[] = {
+        reinterpret_cast<void*>(mat_d),
+        reinterpret_cast<void*>(scales_b),
+        reinterpret_cast<void*>(&input),  // 如果是指针，直接传递地址
+        reinterpret_cast<void*>(&tma_a_desc),
+        reinterpret_cast<void*>(&tma_b_desc),
+        reinterpret_cast<void*>(&tma_scales_a_desc),
+        reinterpret_cast<void*>(&tma_d_desc)
+    };
+    auto status = cudaLaunchKernelExC(&config, kernel, kernelArgs);
+
+    // auto status = cudaLaunchKernelExC(&config, kernel, reinterpret_cast<void**>(mat_d), scales_b, input,
+        // tma_a_desc, tma_b_desc, tma_scales_a_desc, tma_d_desc);
     DG_HOST_ASSERT(status == cudaSuccess);
 }
 
@@ -372,8 +394,17 @@ void runGemm(cudaKernel_t kernel, void* mat_a, uint64_t ld_a, uint64_t stride_a,
 
     StridedBatchedSchedulerInput input{shape_m, ld_a, stride_a, ld_b, stride_b, ld_d, stride_d};
     // Launch
-    auto status = cudaLaunchKernelEx(&config, kernel, reinterpret_cast<__nv_bfloat16*>(mat_d), scales_b, input,
-        tma_a_desc, tma_b_desc, tma_scales_a_desc, tma_d_desc);
+    void* kernelArgs[] = {
+        reinterpret_cast<void*>(mat_d),
+        reinterpret_cast<void*>(scales_b),
+        reinterpret_cast<void*>(&input),  // 如果是指针，直接传递地址
+        reinterpret_cast<void*>(&tma_a_desc),
+        reinterpret_cast<void*>(&tma_b_desc),
+        reinterpret_cast<void*>(&tma_scales_a_desc),
+        reinterpret_cast<void*>(&tma_d_desc)};
+    auto status = cudaLaunchKernelExC(&config, kernel, kernelArgs);
+    // auto status = cudaLaunchKernelExC(&config, kernel, reinterpret_cast<void**>(mat_d), scales_b, input,
+        // tma_a_desc, tma_b_desc, tma_scales_a_desc, tma_d_desc);
     DG_HOST_ASSERT(status == cudaSuccess);
 }
 

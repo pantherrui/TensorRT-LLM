@@ -107,7 +107,7 @@ class Parameter:
             lower_shape = None
             # workaround for reinterpreted data type
             dtype = self._value.dtype
-            if (self.dtype == trt.fp4 or self.dtype
+            if ((hasattr(trt, 'fp4') and self.dtype == trt.fp4) or self.dtype
                     == trt.fp8) and (dtype == np.uint8 or dtype == np.int8
                                      or dtype == np.int32 or dtype == np.int64):
                 lower_type = self.dtype
@@ -116,7 +116,7 @@ class Parameter:
             self._value = constant(self._value, lower_type, lower_shape)
             return self._value
         elif self._value is None or isinstance(self._value, np.ndarray):
-            if self._dtype == trt.fp4:
+            if hasattr(trt, 'fp4') and self._dtype == trt.fp4:
                 shape = list(self._shape)
                 assert shape[
                     -1] % 16 == 0, "For FP4, the last dimension of the shape should be multiple of 16"
@@ -213,7 +213,7 @@ class Parameter:
             # convert the scalar into a tensor which each dim is 1.
             v = v.reshape(self.shape)
 
-        if self.dtype == trt.fp4:
+        if hasattr(trt, 'fp4') and self.dtype == trt.fp4:
             assert v.shape[:-1] == self.shape[:-1] and v.shape[-1] == self.shape[-1] // 2 // v.dtype.itemsize, \
                 f'For FP4, the shape of the value should be the same as the original shape, ' \
                 f'except the last dimension should be half of the original shape. ' \
@@ -222,7 +222,7 @@ class Parameter:
             assert v.shape == self.shape, \
                 f'The value updated is not the same shape as the original. ' \
                 f'Updated: {v.shape}, original: {self.shape}'
-        if (self.dtype == trt.fp4 or self.dtype
+        if ((hasattr(trt, 'fp4') and self.dtype == trt.fp4) or self.dtype
                 == trt.fp8) and (v.dtype == np.int8 or v.dtype == np.uint8
                                  or v.dtype == np.int32 or v.dtype == np.int64):
             pass

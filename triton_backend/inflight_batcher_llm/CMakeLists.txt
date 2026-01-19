@@ -63,7 +63,7 @@ if(TRITON_ENABLE_METRICS AND NOT TRITON_ENABLE_STATS)
 endif()
 
 set(TRITON_REPO_ORGANIZATION
-    "https://github.com/triton-inference-server"
+    "git@git.corp.kuaishou.com:video/auto_subtitles/triton-inference-server"
     CACHE STRING "Git repository to pull from")
 set(TRITON_COMMON_REPO_TAG
     "main"

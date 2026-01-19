@@ -1290,7 +1290,7 @@ def dynamic_quantize(
         double_scale: Tensor,
         axis: int = -1,
         block_size: int = 16,
-        data_qtype: trt.DataType = trt.fp4,
+        data_qtype: trt.DataType = trt.int8,
         scale_qtype: trt.DataType = trt.fp8) -> Tuple[Tensor, Tensor]:
     '''
     Parameters:

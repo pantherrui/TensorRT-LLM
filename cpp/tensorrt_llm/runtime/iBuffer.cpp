@@ -100,8 +100,8 @@ char const* IBuffer::getDataTypeName(DataType dataType)
     case nvinfer1::DataType::kUINT8: return DataTypeTraits<nvinfer1::DataType::kUINT8>::name;
     case nvinfer1::DataType::kINT8: return DataTypeTraits<nvinfer1::DataType::kINT8>::name;
     case nvinfer1::DataType::kFP8: return DataTypeTraits<nvinfer1::DataType::kFP8>::name;
-    case nvinfer1::DataType::kINT4: [[fallthrough]] /* do nothing */;
-    case nvinfer1::DataType::kFP4: /* do nothing */;
+    // case nvinfer1::DataType::kINT4: [[fallthrough]] /* do nothing */;
+    // case nvinfer1::DataType::kFP4: /* do nothing */;
     }
     TLLM_THROW("Unknown data type");
 }

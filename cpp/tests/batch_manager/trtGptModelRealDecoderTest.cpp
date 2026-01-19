@@ -732,8 +732,8 @@ std::string generateTestName(testing::TestParamInfo<ParamType> const& info)
     case nvinfer1::DataType::kUINT8: name.append("UInt8"); break;
     case nvinfer1::DataType::kFP8: name.append("Float8"); break;
     case nvinfer1::DataType::kBF16: name.append("BFloat16"); break;
-    case nvinfer1::DataType::kINT4: name.append("Int4"); break;
-    case nvinfer1::DataType::kFP4: name.append("Fp4"); break;
+    // case nvinfer1::DataType::kINT4: name.append("Int4"); break;
+    // case nvinfer1::DataType::kFP4: name.append("Fp4"); break;
     default: throw std::runtime_error("Unsupported DataType"); break;
     }
 

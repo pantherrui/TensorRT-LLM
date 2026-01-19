@@ -318,10 +318,12 @@ public:
     {
         if (FP8)
             return nvinfer1::DataType::kFP8;
+#if 0
         if (FP4)
             return nvinfer1::DataType::kFP4;
         if (INT_QUANT && INT4)
             return nvinfer1::DataType::kINT4; // Hack to distinguish int4, use unsigned
+#endif
         if (INT_QUANT)
             return nvinfer1::DataType::kINT8;
         if (std::is_same_v<DataType, float>)
@@ -351,10 +353,12 @@ public:
         {
             return nvinfer1::DataType::kINT8;
         }
+#if 0
         else if constexpr (std::is_same_v<T, cutlass::uint4b_t>)
         {
             return nvinfer1::DataType::kINT4;
         }
+#endif
         else if constexpr (std::is_same_v<T, nv_bfloat16>)
         {
             return nvinfer1::DataType::kBF16;

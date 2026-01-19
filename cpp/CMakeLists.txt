@@ -44,6 +44,14 @@ option(ENABLE_MULTI_DEVICE
 option(ENABLE_UCX "Enable building with UCX (Uniform Communication X) support"
        ON)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+set(CMAKE_CUDA_EXTENSIONS OFF)
+
 if(NVTX_DISABLE)
   add_compile_definitions("NVTX_DISABLE")
   message(STATUS "NVTX is disabled")

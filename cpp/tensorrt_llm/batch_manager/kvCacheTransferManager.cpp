@@ -60,8 +60,8 @@ void KVCacheTransferManager::copyBlock(BlockPtr const& src, BlockPtr const& dst,
     {
         auto const srcPtr = computeBlockPointer(src, pools, poolIdx);
         auto dstPtr = computeBlockPointer(dst, pools, poolIdx);
-        if (numTokensToCopy <= 0 || srcPtr->getDataType() == nvinfer1::DataType::kINT4
-            || srcPtr->getDataType() == nvinfer1::DataType::kFP4)
+        if (numTokensToCopy <= 0 /*|| srcPtr->getDataType() == nvinfer1::DataType::kINT4
+            || srcPtr->getDataType() == nvinfer1::DataType::kFP4*/)
         {
             // numTokensToCopy <= 0 indicates entire block should be copied.
             // Partial copy has not been implemented yet for data types INT4 and FP4

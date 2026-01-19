@@ -365,7 +365,7 @@ class ModelWeightsLoader:
                 continue
             w_shape = weights[tllm_key].shape
             # WAR for 4bit datatype shape mismatch.
-            if w_shape != param.shape and param.dtype != trt.fp4:
+            if w_shape != param.shape: # and param.dtype != trt.fp4:
                 logger.warning(
                     f'{tllm_key} has invalid shape {w_shape}. Expected {param.shape}.'
                 )

@@ -447,6 +447,7 @@ void CutlassFpAIntBGemmRunner<ActivationType, WeightType, QuantOp, ScaleZeroType
             QuantOp, EpilogueTag>(A, B, weight_scales, weight_zero_points, biases, alpha, C, m, n, k, group_size,
             workspace_ptr, workspace_bytes, gemm_config, stream, occupancy);
     }
+#if 0 // link error on cuda 12.4
     else if (sm_ == 90)
     {
         static_assert(!cutlass::platform::is_same<ActivationType, __nv_fp8_e4m3>::value
@@ -456,6 +457,7 @@ void CutlassFpAIntBGemmRunner<ActivationType, WeightType, QuantOp, ScaleZeroType
             EpilogueTag>(A, B, weight_scales, weight_zero_points, biases, alpha, C, m, n, k, group_size, workspace_ptr,
             workspace_bytes, gemm_config, stream, occupancy);
     }
+#endif
     else
     {
         throw std::runtime_error(

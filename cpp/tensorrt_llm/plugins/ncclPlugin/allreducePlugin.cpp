@@ -183,7 +183,8 @@ bool AllreducePlugin::supportsFormatCombination(
         {
             if (pos == nbInputs)
             {
-                return (inOut[pos].type == nvinfer1::DataType::kFP4) && (inOut[pos].format == TensorFormat::kLINEAR);
+                assert(0);
+                // return (inOut[pos].type == nvinfer1::DataType::kFP4) && (inOut[pos].format == TensorFormat::kLINEAR);
             }
             if (pos == (nbInputs + 2))
             {
@@ -527,7 +528,8 @@ nvinfer1::DataType AllreducePlugin::getOutputDataType(
     {
         if (index == 0)
         {
-            return nvinfer1::DataType::kFP4;
+            assert(0);
+            // return nvinfer1::DataType::kFP4;
         }
         else if (index == 2)
         {

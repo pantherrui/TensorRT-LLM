@@ -166,13 +166,13 @@ def generate_fmha_cu(project_dir, venv_python):
 
     env = os.environ.copy()
     env.update({
-        "TORCH_CUDA_ARCH_LIST": "9.0",
+        "TORCH_CUDA_ARCH_LIST": "8.9",
         "ENABLE_SM89_QMMA": "1",
         "ENABLE_HMMA_FP32": "1",
         "GENERATE_CUBIN": "1",
         "SCHEDULING_MODE": "1",
-        "ENABLE_SM100": "1",
-        "ENABLE_SM120": "1",
+        # "ENABLE_SM100": "0",
+        # "ENABLE_SM120": "0",
         "GENERATE_CU_TRTLLM": "true"
     })
 

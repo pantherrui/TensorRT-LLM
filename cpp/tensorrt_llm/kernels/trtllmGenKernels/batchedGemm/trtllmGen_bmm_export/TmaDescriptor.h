@@ -54,10 +54,12 @@ inline CUtensorMap buildNdTmaDescriptor(tg::Dtype dtype, std::vector<uint64_t> c
     {
         tmaDataFormat = CU_TENSOR_MAP_DATA_TYPE_BFLOAT16;
     }
+#ifdef ENABLE_FP4
     else if (dtype == tg::Dtype::E2m1)
     {
         tmaDataFormat = CU_TENSOR_MAP_DATA_TYPE_16U4_ALIGN8B;
     }
+#endif
     else if (dtype == tg::Dtype::Fp32)
     {
         tmaDataFormat = CU_TENSOR_MAP_DATA_TYPE_FLOAT32;

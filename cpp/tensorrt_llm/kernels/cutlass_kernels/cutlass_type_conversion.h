@@ -28,7 +28,7 @@
 #include <cuda_fp8.h>
 
 #include "cutlass/float_subbyte.h"
-#include <cuda_fp4.h>
+// #include <cuda_fp4.h>
 
 namespace tensorrt_llm
 {
@@ -63,11 +63,13 @@ struct CutlassType<nvinfer1::DataType::kFP8>
     using type = cutlass::float_e4m3_t;
 };
 
+#ifdef ENABLE_FP4
 template <>
 struct CutlassType<nvinfer1::DataType::kFP4>
 {
     using type = cutlass::float_e2m1_t;
 };
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Tllm to Cutlass
