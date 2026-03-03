@@ -673,7 +673,9 @@ public:
     void operator()(Params const& params, SharedStorage& shared_storage)
     {
 #if defined(__CUDA_ARCH__)
-#if (__CUDA_ARCH__ >= 800) && (__CUDA_ARCH__ < 890)
+#if (__CUDA_ARCH__ >= 750) && (__CUDA_ARCH__ < 800)
+        run_kernel<arch::Sm75>(params, shared_storage);
+#elif (__CUDA_ARCH__ >= 800) && (__CUDA_ARCH__ < 890)
         run_kernel<arch::Sm80>(params, shared_storage);
 #elif (__CUDA_ARCH__ >= 890) && (__CUDA_ARCH__ < 900)
         constexpr bool isFp8 = platform::is_same<ElementA, cutlass::float_e4m3_t>::value

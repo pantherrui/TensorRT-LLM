@@ -255,12 +255,17 @@ struct KVCacheList<false>
 
 __device__ inline uint32_t getSeqLen(uint32_t const* seqLenList, uint32_t idxReq)
 {
+    uint32_t len;
+#if __CUDA_ARCH__ >= 800
     uint64_t cachePolicy;
     asm("createpolicy.fractional.L2::evict_last.b64 %0;\n" : "=l"(cachePolicy));
-    uint32_t len;
     asm("ld.global.nc.L1::evict_last.L2::cache_hint.L2::256B.b32 %0, [%1], %2;\n"
         : "=r"(len)
         : "l"(&seqLenList[idxReq * beamWidth]), "l"(cachePolicy));
+#else
+    // SM75 fallback: cache-policy instructions are not supported before SM80.
+    len = seqLenList[idxReq * beamWidth];
+#endif
     for (uint32_t i = 0; i < beamWidth; i++)
     {
         assert(len == seqLenList[idxReq * beamWidth + i]);

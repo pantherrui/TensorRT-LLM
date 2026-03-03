@@ -35,12 +35,17 @@ inline constexpr int32_t kBAD_PAGE_INDEX = -1;
 __constant__ constexpr float kE4M3_MAX = 448.F;
 
 #ifdef __CUDA_ARCH__
-#if __CUDA_ARCH__ == 860 || __CUDA_ARCH__ == 890 || __CUDA_ARCH__ == 1200
+#if __CUDA_ARCH__ == 750
+// Turing (e.g. T4): up to 64KB shared memory per block.
+constexpr uint32_t kMAX_SMEM_SIZE = (64u << 10);
+#elif __CUDA_ARCH__ == 860 || __CUDA_ARCH__ == 890 || __CUDA_ARCH__ == 1200
 constexpr uint32_t kMAX_SMEM_SIZE = (99u << 10);
 #elif __CUDA_ARCH__ == 800 || __CUDA_ARCH__ == 870
 constexpr uint32_t kMAX_SMEM_SIZE = (163u << 10);
 #elif __CUDA_ARCH__ == 900
 constexpr uint32_t kMAX_SMEM_SIZE = (227u << 10);
+#else
+#error "kMAX_SMEM_SIZE is not defined for this __CUDA_ARCH__"
 #endif
 #endif
 

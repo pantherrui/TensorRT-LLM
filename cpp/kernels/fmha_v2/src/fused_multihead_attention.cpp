@@ -730,7 +730,6 @@ int main(int argc, char** argv)
         {
             attention_mask_type = Attention_mask_type::CAUSAL;
         }
-    }
     else if (!strcmp(argv[ii], "-sliding-or-chunked-causal-mask"))
     {
         attention_mask_type = Attention_mask_type::SLIDING_OR_CHUNKED_CAUSAL;
@@ -1522,37 +1521,34 @@ for (size_t so = 0; so < s; ++so)
     for (size_t bi = 0; bi < b; ++bi)
     {
         int actual_seqlen = seqlens[bi];
-        //  attention_mask_type == Attention_mask_type::CUSTOM_MASK
-        if (attention_mask_type == Attention_mask_type::CUSTOM_MASK
-            || attention_mask_type == Attention_mask_type::CAUSAL
-            || attention_mask_type == Attention_mask_type::SLIDING_OR_CHUNKED_CAUSAL)
+        for (size_t si = 0; si < s; ++si)
         {
-            valid = valid && (so >= si);
-        }
-        if (attention_mask_type == Attention_mask_type::SLIDING_OR_CHUNKED_CAUSAL)
-        {
-            if (chunked_attention_size > 0)
-            {
+            bool valid = (si < actual_seqlen) && (so < actual_seqlen);
+            //  attention_mask_type == Attention_mask_type::CUSTOM_MASK
+            if (attention_mask_type == Attention_mask_type::CUSTOM_MASK ||
+                attention_mask_type == Attention_mask_type::CAUSAL ||
+                attention_mask_type == Attention_mask_type::SLIDING_OR_CHUNKED_CAUSAL) {
+              valid = valid && (so >= si);
+            }
+            if (attention_mask_type == Attention_mask_type::SLIDING_OR_CHUNKED_CAUSAL) {
+              if (chunked_attention_size > 0) {
                 int chunk_idx = so / chunked_attention_size;
                 valid = valid && (si >= (chunk_idx * chunked_attention_size));
-            }
-            else
-            {
+              } else {
                 valid = valid && (si >= std::max(int(so - sliding_window_size), 0));
+              }
             }
-        }
-        if (is_mtp)
-        {
-            // Only the last s_q tokens are used for verifying the results.
-            size_t idx = so - (actual_seqlen - s_q);
-            size_t num_mtp_tokens = s_q / num_grouped_heads;
-            size_t mtp_token_idx = idx / num_grouped_heads;
-            valid = idx >= 0 && si < (actual_seqlen - num_mtp_tokens + 1 + mtp_token_idx) && (so < actual_seqlen);
-        }
-        if (!skip_checks)
-        {
-            // The mask is stored as floats.
-            mask_h[so * b * s + bi * s + si] = valid ? 1.f : 0.f; // mask dims [s_q, b, s_kv]
+            if (is_mtp) {
+              // Only the last s_q tokens are used for verifying the results.
+              size_t idx = so - (actual_seqlen - s_q);
+              size_t num_mtp_tokens = s_q / num_grouped_heads;
+              size_t mtp_token_idx = idx / num_grouped_heads;
+              valid = idx >= 0 && si < (actual_seqlen - num_mtp_tokens + 1 + mtp_token_idx) && (so < actual_seqlen);
+            }
+            if (!skip_checks) {
+              // The mask is stored as floats.
+              mask_h[so * b * s + bi * s + si] = valid ? 1.f : 0.f;  // mask dims [s_q, b, s_kv]
+            }
         }
     }
 }

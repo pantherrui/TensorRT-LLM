@@ -27,6 +27,7 @@ set(SRC_CU_EXTRA)
 list(FILTER SRC_CPP EXCLUDE REGEX ".*nvrtcWrapper/.*")
 add_subdirectory(decoderXQAImplJIT/nvrtcWrapper)
 
+filter_cuda_archs("75" SRC_CPP)
 filter_cuda_archs("80" SRC_CPP)
 filter_cuda_archs("86" SRC_CPP)
 filter_cuda_archs("89" SRC_CPP)

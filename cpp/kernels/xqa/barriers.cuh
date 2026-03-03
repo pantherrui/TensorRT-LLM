@@ -41,16 +41,25 @@ public:
     __device__ inline CtaBarrier(uint32_t count)
     {
         assert(count > 0);
+#if __CUDA_ARCH__ >= 800
         asm volatile("mbarrier.init.shared::cta.b64 [%0], %1;\n" ::"r"(addr()), "r"(count));
+#else
+        mExpected = count;
+        mArrived = 0;
+        mPhase = 0;
+#endif
     }
 
     __device__ ~CtaBarrier()
     {
+#if __CUDA_ARCH__ >= 800
         asm volatile("mbarrier.inval.shared::cta.b64 [%0];\n" ::"r"(addr()));
+#endif
     }
 
     __device__ inline ArrivalToken arrive(uint32_t update = 1)
     {
+#if __CUDA_ARCH__ >= 800
         ArrivalToken token;
 #if __CUDA_ARCH__ >= 900
         asm volatile("mbarrier.arrive.release.cta.shared::cta.b64 %0, [%1], %2;\n"
@@ -73,7 +82,22 @@ public:
         }
 #endif
         return token;
+#else
+        uint32_t token = mPhase + 1;
+        if (update > 0)
+        {
+            uint32_t old = atomicAdd(&mArrived, update);
+            if (old + update >= mExpected)
+            {
+                __threadfence_block();
+                mArrived = 0;
+                atomicAdd(&mPhase, 1);
+            }
+        }
+        return static_cast<ArrivalToken>(token);
+#endif
     }
+
 #if __CUDA_ARCH__ >= 900
     __device__ inline ArrivalToken arrive_tx(uint32_t txCount, uint32_t arriveCount = 1)
     {
@@ -94,6 +118,7 @@ public:
 #endif
     __device__ inline bool test_wait(ArrivalToken&& token)
     {
+#if __CUDA_ARCH__ >= 800
         uint32_t ready;
         asm volatile(
             "{\n"
@@ -105,10 +130,14 @@ public:
             : "=r"(ready)
             : "r"(addr()), "l"(token));
         return ready != 0;
+#else
+        return mPhase >= static_cast<uint32_t>(token);
+#endif
     }
 
     __device__ inline bool test_wait_parity(bool parity)
     {
+#if __CUDA_ARCH__ >= 800
         uint32_t ready;
         asm volatile(
             "{\n"
@@ -120,6 +149,9 @@ public:
             : "=r"(ready)
             : "r"(addr()), "r"(uint32_t{parity}));
         return ready != 0;
+#else
+        return (mPhase & 1u) == static_cast<uint32_t>(parity);
+#endif
     }
 #if __CUDA_ARCH__ >= 900
     __device__ inline bool try_wait(ArrivalToken&& token)
@@ -175,10 +207,12 @@ public:
     }
 
 private:
+#if __CUDA_ARCH__ >= 800
     __device__ inline uint32_t addr() const
     {
         return __cvta_generic_to_shared(&mBar);
     }
+#endif
 
     template <bool funcSupportsBlocking, typename F>
     __device__ inline static void poll(F&& func)
@@ -206,7 +240,13 @@ public:
     static constexpr uint32_t kSUSPEND_TIME_HINT = 0xFFFFFFFFU;
 
 private:
+#if __CUDA_ARCH__ >= 800
     uint64_t mBar;
+#else
+    uint32_t mExpected;
+    uint32_t mArrived;
+    uint32_t mPhase;
+#endif
 };
 
 __device__ inline void init(CtaBarrier* bar, uint32_t count)

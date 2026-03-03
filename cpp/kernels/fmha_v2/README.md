@@ -24,7 +24,7 @@ To generate subset of kernels, you can add conditions in setup.py.
 
 To generate the files and compile the kernels:
 ```
-python3 setup.py && make -j
+python3 setup.py && make -j1 GENERATE_CUBIN=1
 ```
 
 `ccache` allows caching previous compilations to speed up recompilation. To leverage `ccache`:

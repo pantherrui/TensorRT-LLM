@@ -2161,7 +2161,7 @@ def get_kernel_code(kspec, kname, lname):
     params_str = 'reinterpret_cast<bert::Fused_multihead_attention_params_v2 &>(params)' if generate_cu_trtllm else 'params'
     attn_mask_type_str = 'using Attention_mask_type = ContextAttentionMaskType;' if generate_cu_trtllm else 'using Attention_mask_type = fmha::Attention_mask_type;'
     bert_launch_params = '' if generate_cu_trtllm else 'using Launch_params = bert::Fused_multihead_attention_launch_params;'
-    include_str = '#include "../fused_multihead_attention_common.h"' if generate_cu_trtllm else ''
+    include_str = '#include "tensorrt_llm/kernels/contextFusedMultiHeadAttention/fused_multihead_attention_common.h"' if generate_cu_trtllm else ''
     num_compute_groups_str = '' if generate_cu_trtllm else 'static constexpr int NUM_COMPUTE_GROUPS = 2;'
     fused_multihead_attention_params_v2_str = 'Fused_multihead_attention_params_v2' if generate_cu_trtllm else f'{params_type}'
     const_fused_multihead_attention_params_v2_str = 'Fused_multihead_attention_params_v2' if generate_cu_trtllm else f'const {params_type}'
@@ -6198,6 +6198,14 @@ def enumerate_kernels():
                   and kspec.version       == 2
                   and kspec.cross_mha     == False
                   and kspec.flash_attention == True
+                  or (kspec.sm == 75
+                  and kspec.dtype         in ['fp16']
+                  and kspec.head_size     <= 256
+                  and kspec.head_size_v   == 0
+                  and kspec.sage_block_sizes is None
+                  and kspec.version       == 2
+                  and kspec.cross_mha     == False
+                  and kspec.flash_attention == True)
                   or (kspec.sm == 90
                   and kspec.dtype         in ['fp16', 'bf16', 'fp16_fp32']
                   and kspec.head_size     <= 256

@@ -82,7 +82,11 @@ constexpr uint32_t cvtExpansion = exactDiv(inputElemSize, cacheElemSize);
 constexpr uint32_t preferedKHeadPartBytes = 64;
 __constant__ constexpr uint32_t cacheVTileSeqLen = 32;
 #else
-#if __CUDA_ARCH__ == 860 || __CUDA_ARCH__ == 890 || __CUDA_ARCH__ == 1200
+#if __CUDA_ARCH__ == 750
+// Turing has tighter per-block smem budget: reduce K/V tile footprint.
+constexpr uint32_t preferedKHeadPartBytes = 32;
+__constant__ constexpr uint32_t cacheVTileSeqLen = 16;
+#elif __CUDA_ARCH__ == 860 || __CUDA_ARCH__ == 890 || __CUDA_ARCH__ == 1200
 constexpr uint32_t preferedKHeadPartBytes = 64;
 __constant__ constexpr uint32_t cacheVTileSeqLen = 32;
 #elif __CUDA_ARCH__ == 800 || __CUDA_ARCH__ == 870 || __CUDA_ARCH__ == 900
@@ -432,7 +436,7 @@ struct alignas(128) SharedMem
 
 CUBIN_EXPORT __device__ constexpr uint32_t smemSize = sizeof(SharedMem);
 #ifdef __CUDA_ARCH__
-static_assert(smemSize < kMAX_SMEM_SIZE);
+static_assert(smemSize <= kMAX_SMEM_SIZE);
 #endif
 
 #if 0

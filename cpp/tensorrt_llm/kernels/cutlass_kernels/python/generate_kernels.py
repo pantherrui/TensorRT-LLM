@@ -739,6 +739,27 @@ def generate_sm80_operations(is_arch_enabled):
     return operations
 
 
+def generate_sm75_fused_grouped_gemm_operations():
+    arch = 75
+    supported_dtypes = [DataType.f16]
+    epi_tags = [
+        TrtLlm_EpilogueTag.epilogue_op_silu, TrtLlm_EpilogueTag.epilogue_op_gelu
+    ]
+    cta_shapes_mnk = [(16, 128, 64), (16, 256, 64), (32, 128, 64),
+                      (64, 128, 64), (128, 128, 64)]
+
+    stages = [2, 3, 4]
+
+    partial_args = product(supported_dtypes, epi_tags, cta_shapes_mnk, stages)
+
+    operations = list()
+    for dtype, epi_tag, cta_shape_mnk, stage in partial_args:
+        item = GemmSm80LauncherConfig(GemmKind.Grouped, arch, dtype, epi_tag,
+                                      cta_shape_mnk, stage)
+        operations.append(item)
+    return operations
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Print the output directory')
 
@@ -787,9 +808,10 @@ if __name__ == "__main__":
     # The goal here is to group kernels with common instantiations together in order to reduce template instantiation overheads.
     # Template instantiation dominates the time in a compilation unit, so it is the most important factor to improve.
     operations = []
-    # Only support SM86 / SM89
+    # Only support SM75
+    operations += generate_sm75_fused_grouped_gemm_operations()
     # operations += generate_sm90_operations(has_arch(90) or has_arch(89))
-    operations += generate_sm80_operations(has_arch(80) or has_arch(86) or has_arch(89))
+    # operations += generate_sm80_operations(has_arch(80) or has_arch(86) or has_arch(89))
     # operations += generate_sm120_operations(has_arch(120))
     # operations += generate_sm100_operations(has_arch(100))
     # operations += generate_sm90_operations(has_arch(90))

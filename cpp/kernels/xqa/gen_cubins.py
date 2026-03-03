@@ -29,7 +29,7 @@ CompileArchMacrosAndFile = namedtuple('CompileArchMacrosAndFile',
                                       'arch macro_list input_file_name')
 
 build_func_name_prefix = 'xqa_kernel'
-arch_options = [80, 86, 90]
+arch_options = [75, 80, 86, 90]
 config_list = [
     # for llama v2 70b
     [
@@ -368,6 +368,9 @@ def generate_compile_arch_macro_list(compile_macro_options: list):
             if "__half" in option_combination and "__nv_bfloat16" in option_combination:
                 continue
             assert option_macro_names[3] == "CACHE_ELEM_ENUM"
+            # bf16 input kernels rely on Ampere+ features.
+            if option_combination[0] == '__nv_bfloat16' and arch < 80:
+                continue
             # fp8 kv cache is only supported on sm89 and next.
             if option_combination[3] == 2 and arch < 89:
                 continue
