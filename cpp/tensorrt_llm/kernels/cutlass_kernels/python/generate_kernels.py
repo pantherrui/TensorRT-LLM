@@ -787,9 +787,10 @@ if __name__ == "__main__":
     # The goal here is to group kernels with common instantiations together in order to reduce template instantiation overheads.
     # Template instantiation dominates the time in a compilation unit, so it is the most important factor to improve.
     operations = []
-    # Only support SM86 / SM89
+    # Only support SM80 / SM86 / SM89.
+    if has_arch(80) or has_arch(86) or has_arch(89):
+        operations += generate_sm80_operations(has_arch(80) or has_arch(86) or has_arch(89))
     # operations += generate_sm90_operations(has_arch(90) or has_arch(89))
-    operations += generate_sm80_operations(has_arch(80) or has_arch(86) or has_arch(89))
     # operations += generate_sm120_operations(has_arch(120))
     # operations += generate_sm100_operations(has_arch(100))
     # operations += generate_sm90_operations(has_arch(90))

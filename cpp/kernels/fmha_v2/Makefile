@@ -25,7 +25,7 @@ CUDA  ?= /usr/local/cuda
 # The path to cudnn.
 CUDNN ?= /usr/local/cudnn
 
-CMAKE_FLAGS = -DTORCH_CUDA_ARCH_LIST="8.0;9.0"
+CMAKE_FLAGS = -DTORCH_CUDA_ARCH_LIST="8.0;8.6;8.9"
 ifdef USE_CCACHE
   CCACHE = ccache
   CMAKE_FLAGS += -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
